@@ -22,10 +22,10 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/product_launched_with_m.mk)
 
 # Inherit common Lineage phone.
-$(call inherit-product, vendor/lineage/config/common_full_phone.mk)
+$(call inherit-product, vendor/rr/config/common_full_phone.mk)
 
 # Set those variables here to overwrite the inherited values.
-PRODUCT_NAME := lineage_j3xltexx
+PRODUCT_NAME := rr_j3xltexx
 PRODUCT_DEVICE := j3xltexx
 PRODUCT_MODEL := SM-J320W8
 PRODUCT_BRAND := samsung

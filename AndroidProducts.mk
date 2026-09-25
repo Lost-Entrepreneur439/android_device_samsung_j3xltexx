@@ -17,9 +17,9 @@
 LOCAL_PATH := device/samsung/j3xltexx
 
 PRODUCT_MAKEFILES := \
-    $(LOCAL_PATH)/lineage_j3xltexx.mk
+    $(LOCAL_PATH)/rr_j3xltexx.mk
 
 COMMON_LUNCH_CHOICES := \
-    lineage_j3xltexx-user \
-    lineage_j3xltexx-userdebug \
-    lineage_j3xltexx-eng
+    rr_j3xltexx-user \
+    rr_j3xltexx-userdebug \
+    rr_j3xltexx-eng
