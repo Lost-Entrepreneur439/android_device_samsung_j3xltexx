@@ -1,5 +1,7 @@
 /*
-   Copyright (c) 2016, The CyanogenMod Project. All rights reserved.
+   Copyright (c) 2016, The Linux Foundation. All rights reserved.
+   Copyright (c) 2017-2020, The LineageOS Project. All rights reserved.
+
    Redistribution and use in source and binary forms, with or without
    modification, are permitted provided that the following conditions are
    met:
@@ -12,6 +14,7 @@
     * Neither the name of The Linux Foundation nor the names of its
       contributors may be used to endorse or promote products derived
       from this software without specific prior written permission.
+
    THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED
    WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT
@@ -25,54 +28,50 @@
    IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <stdlib.h>
-#include <string.h>
-#define _REALLY_INCLUDE_SYS__SYSTEM_PROPERTIES_H_
-#include <sys/_system_properties.h>
-
 #include <android-base/file.h>
 #include <android-base/logging.h>
 #include <android-base/strings.h>
 #include <android-base/properties.h>
 
-#include "property_service.h"
-#include "vendor_init.h"
+#include "init_universal3475.h"
 
 using android::base::GetProperty;
 using android::base::ReadFileToString;
 using android::base::Trim;
 
-void property_override(char const prop[], char const value[])
-{
-    prop_info *pi;
-
-    pi = (prop_info*) __system_property_find(prop);
-    if (pi)
-        __system_property_update(pi, value, strlen(value));
-    else
-        __system_property_add(prop, strlen(prop), value, strlen(value));
-}
-
-void property_override_dual(char const system_prop[],
-        char const vendor_prop[], char const value[])
-{
-    property_override(system_prop, value);
-    property_override(vendor_prop, value);
-}
-
 void vendor_load_properties()
 {
     std::string bootloader = GetProperty("ro.bootloader", "");
-    std::string device;
 
-    if (bootloader.find("J320W8") != std::string::npos) {
-        /* SM-J320W8 on5ltemtr TODO: replace the fingerprints with the right ones */
-        property_override_dual("ro.product.model", "ro.vendor.product.model", "SM-J320W8");
-        property_override_dual("ro.build.fingerprint", "ro.vendor.build.fingerprint", "samsung/j3xltexx/j3xltexx:7.1.1/NMF26X/J320W8VLU2BQK1:user/release-keys");
-        property_override("ro.system.build.fingerprint", "ro.system.build.fingerprint");
-        property_override("ro.build.description", "j3xltexx-user 7.1.1 NMF26X J320W8VLU2BQK1 release-keys");
+    if (bootloader.find("J320A") == 0) {
+        /* j3xlteatt */
+        property_override("ro.build.description", "j3xlteuc-user 7.1.1 NMF26X J320AUCU3BVH1 release-keys");
+        set_ro_product_prop("device", "j3xlteatt");
+        set_ro_build_prop("fingerprint", "samsung/j3xlteuc/j3xlteatt:7.1.1/NMF26X/J320AUCU3BVH1:user/release-keys");
+        set_ro_product_prop("model", "SAMSUNG-SM-J320A");
+        set_ro_product_prop("name", "j3xlteuc");
+        gsm_properties("9,1");
+    } else if (bootloader.find("J320AZ") == 0) {
+        /* j3xlteaio */
+        property_override("ro.build.description", "j3xltetu-user 7.1.1 NMF26X J320AZTUU3BVH1 release-keys");
+        set_ro_product_prop("device", "j3xlteaio");
+        set_ro_build_prop("fingerprint", "samsung/j3xltetu/j3xlteaio:7.1.1/NMF26X/J320AZTUU3BVH1:user/release-keys");
+        set_ro_product_prop("model", "SAMSUNG-SM-J320AZ");
+        set_ro_product_prop("name", "j3xltetu");
+        gsm_properties("9,1");
+    } else if (bootloader.find("J320W8") == 0) {
+        /* j3xltebmc */
+        property_override("ro.build.description", "j3xltebmc-user 7.1.1 NMF26X J320W8VLU2BQK1 release-keys");
+        set_ro_product_prop("device", "j3xltebmc");
+        set_ro_build_prop("fingerprint", "samsung/j3xltebmc/j3xltebmc:7.1.1/NMF26X/J320W8VLU2BQK1:user/release-keys");
+        set_ro_product_prop("model", "SM-J320W8");
+        set_ro_product_prop("name", "j3xltebmc");
+        gsm_properties("9,1");
+    } else {
+        gsm_properties("9,1");
     }
 
-    device = GetProperty("ro.product.device", "");
-    LOG(ERROR) << "Found bootloader id '" << bootloader.c_str() << "' setting build properties for '" << device.c_str() << "' device\n";
+    std::string device = GetProperty("ro.product.device", "");
+    LOG(ERROR) << "Found bootloader id " << bootloader <<  " setting build properties for "
+        << device <<  " device" << std::endl;
 }
